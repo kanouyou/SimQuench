@@ -95,8 +95,9 @@ void QAnalysis::PlotCurrent() {
 	}
   }
   
-  gr->SetTitle("Current Decay; Time [sec]; Current [A]");
-  gr->SetLineColor(kAzure+7);
+  gr->GetXaxis()->SetLabelSize(0);
+  gr->SetTitle("; ; Current [A]");
+  gr->SetLineColor(kAzure+3);
   gr->SetLineWidth(2);
   gr->Draw("al"); 
 }
@@ -145,10 +146,11 @@ void QAnalysis::PlotResistance() {
 	  cnt += 1;
 	}
   }
-
-  gr->SetTitle("; Time [sec]; Resistance [#Omega]");
+  
+  gr->GetXaxis()->SetLabelSize(0);
+  gr->SetTitle("; ; Resistance [#Omega]");
   gr->SetLineWidth(2);
-  gr->SetLineColor(kBlue+1);
+  gr->SetLineColor(kRed);
   gr->Draw("al");
 }
 
@@ -179,12 +181,12 @@ void QAnalysis::PlotPower() {
   for (int i=0; i<tree->GetEntries(); i++) {
     tree->GetEntry(i);
 	if (posID[0]==1 && posID[1]==1 && posID[2]==18) {
-      gr->SetPoint(cnt, time, R*current*current);
+      gr->SetPoint(cnt, time, R*current*current*1e-3);
 	  cnt++;
 	}
   }
   
-  gr->SetTitle(" Time [sec]; Power [W]");
+  gr->SetTitle("; Time [sec]; Power [kW]");
   gr->SetLineWidth(2);
   gr->SetLineColor(kOrange);
   gr->Draw("al");
@@ -237,7 +239,6 @@ double QAnalysis::GetMinTemperature(double fTime) {
   }
   
   double fMinimum = fTemperature[0];
-  cout << fTemperature.size() << endl;
 
   for (vector<int>::size_type i=0; i<fTemperature.size(); i++) {
     if (fMinimum>fTemperature[i])
