@@ -15,10 +15,14 @@ class QAnalysis {
 	void PlotQuenchedNumber();
 	void PlotResistance();
 	void PlotVoltage();
+	void PlotPower();
 	void PlotVelocityDistribution(int phi);
 	TGraph* GetTemperatureGraph(int z, int phi, int r);
     double GetMinimum(std::string name);
 	double GetMaximum(std::string name);
+    double GetMinTemperature(double fTime);
+	double GetMaxTemperature(double fTime);
+    void   PlotDeltaTemperature();
 
   private:
     TTree* ReadTree(TFile* file);

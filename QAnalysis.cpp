@@ -171,6 +171,25 @@ void QAnalysis::PlotVoltage() {
   gr->Draw("al");
 }
 
+void QAnalysis::PlotPower() {
+  TTree* tree = (TTree*)ReadTree(file);
+  TGraph* gr  = new TGraph();
+
+  int cnt = 0;
+  for (int i=0; i<tree->GetEntries(); i++) {
+    tree->GetEntry(i);
+	if (posID[0]==1 && posID[1]==1 && posID[2]==18) {
+      gr->SetPoint(cnt, time, R*current*current);
+	  cnt++;
+	}
+  }
+  
+  gr->SetTitle(" Time [sec]; Power [W]");
+  gr->SetLineWidth(2);
+  gr->SetLineColor(kOrange);
+  gr->Draw("al");
+}
+
 void QAnalysis::PlotVelocityDistribution(int phi) {
   TTree* tree = ReadTree(file);
   
@@ -185,4 +204,66 @@ void QAnalysis::PlotVelocityDistribution(int phi) {
   
   hist->SetTitle("; Z; R; Quenched Time [sec]");
   hist->Draw("colz");
+}
+
+double QAnalysis::GetMaxTemperature(double fTime) {
+  TTree* tree = (TTree*)ReadTree(file);
+  vector<double> fTemperature;
+
+  for (int i=0; i<tree->GetEntries(); i++) {
+    tree->GetEntry(i);
+    if (time==fTime) 
+      fTemperature.push_back(temp);
+  }
+  
+  double fMaximum = fTemperature[0];
+
+  for (vector<int>::size_type i=0; i<fTemperature.size(); i++) {
+    if (fMaximum<fTemperature[i])
+	  fMaximum = fTemperature[i];
+  }
+
+  return fMaximum;
+}
+
+double QAnalysis::GetMinTemperature(double fTime) {
+  TTree* tree = (TTree*)ReadTree(file);
+  vector<double> fTemperature;
+  
+  for (int i=0; i<tree->GetEntries(); i++) {
+    tree->GetEntry(i);
+    if (time==fTime) 
+      fTemperature.push_back(temp);
+  }
+  
+  double fMinimum = fTemperature[0];
+  cout << fTemperature.size() << endl;
+
+  for (vector<int>::size_type i=0; i<fTemperature.size(); i++) {
+    if (fMinimum>fTemperature[i])
+	  fMinimum = fTemperature[i];
+  }
+
+  return fMinimum;
+}
+
+void QAnalysis::PlotDeltaTemperature() {
+  TGraph* gr = new TGraph();
+  int nt = 80;
+  double fMin, fMax;
+  
+  for (int i=0; i<nt; i++) {
+    fMin = GetMinTemperature(static_cast<double>(i+1));
+	fMax = GetMaxTemperature(static_cast<double>(i+1));
+    gr->SetPoint(i, static_cast<double>(i+1), fMax-fMin);
+	cout << "Time: " << i << " [sec]; Maximum: " << fMax << " [K]; Minimum: " << fMin << " [K]" << endl;
+  }
+
+  gr->SetLineStyle(2);
+  gr->SetLineWidth(2);
+  gr->SetLineColor(kPink-2);
+  gr->SetMarkerStyle(20);
+  gr->SetMarkerColor(kPink-2);
+  gr->SetTitle("; Time [sec]; #Delta T [K]");
+  gr->Draw("apl");
 }

@@ -63,6 +63,13 @@ int main(int argc, char** argv) {
   c1->cd(4);
   gPad->SetTicks(1,1);
   ana->PlotVelocityDistribution(1);
+  
+  // Plot delta temperature
+  TCanvas* c2 = new TCanvas("delta", "delta", 600, 500);
+  c2->SetTicks(1,1);
+  //c2->SetAttLinePS(kBlack, 1, 2);
+
+  ana->PlotDeltaTemperature();
 
   app->Run();
 
